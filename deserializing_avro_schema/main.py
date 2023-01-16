@@ -50,6 +50,8 @@ class AvroSchemaDecoder(faust.Schema):
 
 app = faust.App('deserialization-app', broker="faust-poc-kafka:9092")
 
+my_table = app.Table("test-table", default=str)
+
 test_topic = app.topic(
     "my-topic",
     value_type=bytes,
@@ -62,14 +64,27 @@ test_topic = app.topic(
 async def hello_when_starting():
     print("Hello, application started succesfully!")
 
-# @app.timer(interval=1)
-# async def publishing_random_to_a_topic():
-#     await test_topic.send(key="Me", value="Hey hey")
 
 @app.agent(test_topic)
 async def order(stream):
     async for key, value in stream.items():
         print(f"This data was received: {value} with key: {key}")
+
+        org_id = my_table.get(key, None)
+        print(org_id)
+        if org_id is None:
+            org_id = requests.get(f"http://fastapi-test-service:8000/{key}")
+
+            print(f"Fetched new ID!: {org_id}")
+        else:
+            print("Data was cached!")
+        
+        # Saves data in the changelog topic
+        my_table[key] = org_id
+
+        value["organization_id"] = org_id
+
+        print(f"Enriched data: {value}")
 
 
 if __name__ == "__main__":

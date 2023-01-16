@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./deserializing_avro_schema/Dockerfile # Change here to used DockerFile
+      dockerfile: ./deserializing_avro_schema/Dockerfile
     networks:
       - test_net
     volumes:
@@ -12,6 +12,15 @@ services:
     entrypoint: ./deserializing_avro_schema/local_entrypoint.sh
     depends_on:
       - karapace-registry
+
+  fastapi-test-service:
+    build:
+      context: .
+      dockerfile: ./deserializing_avro_schema/Dockerfile.alt
+    networks:
+      - test_net
+    ports:
+      - "8000:8000"
 
   zookeeper:
     image: "bitnami/zookeeper:latest"
@@ -42,10 +51,6 @@ services:
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_OFFSETS_REPLICATION_FACTOR=1
       - KAFKA_CFG_CONFLUENT_SCHEMA_REGISTRY_URL=http://faust-poc-karapace-registry:8081
-    # command: >
-    #   bash -c
-    #     "sleep 10s &&
-    #     /opt/bitnami/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic 'my-topic'"
 
 
   karapace-registry:
