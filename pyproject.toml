@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "faust-poc"
+version = "0.1.0"
+description = "Create a small POC to see how faust really works"
+authors = ["vellone-fabricio <fabricio.vellone@wexinc.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+faust-streaming = "^0.10.1"
+requests = "^2.28.2"
+fastavro = "^1.7.0"
+httpx = "^0.23.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
