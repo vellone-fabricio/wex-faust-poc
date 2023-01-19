@@ -6,7 +6,7 @@ in_memorian_db = {
     "relc-ygyr4jz7kh55555": "org-12312412412"
 }
 
-@app.on_event("start")
+@app.on_event("startup")
 async def on_start():
     print("Starting application!")
 
